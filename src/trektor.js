@@ -11,16 +11,13 @@ TrelloPowerUp.initialize({
     ];
   },
   "card-badges": function (t) {
-    return t.get("card", "shared", "tracking").then((tracking) =>
-      tracking == null
-        ? []
-        : [
-            {
-              icon: "./tractor-solid.svg",
-              text: `${tracking.task}@${tracking.project}`,
-            },
-          ],
-    );
+    return t
+      .get("card", "shared", "tracking")
+      .then((tracking) =>
+        tracking == null
+          ? []
+          : [{ icon: "./tractor-solid.svg", text: `#${tracking.task}` }],
+      );
   },
   "card-detail-badges": function (t) {
     return t.get("card", "shared", "tracking").then((tracking) =>
@@ -29,7 +26,7 @@ TrelloPowerUp.initialize({
         : [
             {
               title: "Trekking",
-              text: `${tracking.task}@${tracking.project}`,
+              text: `#${tracking.task}`,
               callback: trelloCallbacks.track,
             },
           ],

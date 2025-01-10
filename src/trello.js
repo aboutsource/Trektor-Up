@@ -26,10 +26,11 @@ const track = async function (t) {
   if (projectLabels.length > 1) {
     throw new Error("Card has multiple project labels.");
   }
+  const project = projectLabels[0];
 
   const tracking = {
-    project: projectLabels[0],
-    task: `${card.idShort}_${card.shortLink}`,
+    project,
+    task: `${project}_${card.idShort}_${card.shortLink}`,
   };
 
   await togglService.track(tracking, stripStoryPointsAndTaskToken(card.name));

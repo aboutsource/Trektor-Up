@@ -80,14 +80,13 @@ export class TogglService {
   }
 
   async addTask(tracking) {
-    const togglTaskName = `${tracking.project}_${tracking.task}`;
     const workspaceId = await this.#getWorkspaceId();
     const projectId = await this.#getProjectId(workspaceId, tracking.project);
 
     const togglTasks = await this.#gateway.getTasks(workspaceId, projectId);
     const togglTask =
-      togglTasks.find((t) => t.name === togglTaskName) ||
-      (await this.#gateway.createTask(workspaceId, projectId, togglTaskName));
+      togglTasks.find((t) => t.name === tracking.task) ||
+      (await this.#gateway.createTask(workspaceId, projectId, tracking.task));
 
     return togglTask;
   }
