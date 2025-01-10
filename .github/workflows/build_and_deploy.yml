@@ -20,3 +20,28 @@ jobs:
         with:
           name: "dist"
           path: "dist"
+
+  deploy-staging:
+    name: "Deploy 🚜️"
+    runs-on: "ubuntu-latest"
+    needs:
+      - "build"
+    steps:
+      - name: "update apt cache"
+        run: "sudo apt-get update"
+      - name: "install rclone"
+        run: "sudo apt-get -y install rclone"
+      - uses: "actions/download-artifact@v4"
+        with:
+          name: "dist"
+          path: "dist"
+      - name: "obfuscate password for rclone"
+        run: "echo \"RCLONE_FTP_PASS=$(echo ${{ secrets.HETZNER_FTP_PASS}} | rclone obscure -)\" >> $GITHUB_ENV"
+      - name: "sync webspace"
+        run: "rclone sync dist :ftp:"
+        env:
+          RCLONE_FTP_HOST: "${{ vars.HETZNER_FTP_HOST }}"
+          RCLONE_FTP_USER: "${{ secrets.HETZNER_FTP_USER }}"
+          RCLONE_FTP_EXPLICIT_TLS: "true"
+          RCLONE_VERBOSE: 1
+
