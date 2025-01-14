@@ -36,7 +36,7 @@ TrektorUp uses Vite/Rollup for development.
 
 ### Build the Power-Ip
 
-   npm run build
+    npm run build
 
 If build successfully, there is a dist folder containing the Power-Up
 
@@ -50,6 +50,12 @@ If build successfully, there is a dist folder containing the Power-Up
 
 ### Hosting and Deployment
 
-TrektorUp is hosted at https://trello.aboutsource.net right now. See also https://developer.atlassian.com/cloud/trello/guides/power-ups/building-a-power-up-part-one/#getting-started for hosting requirements.
+TrektorUp is hosted at https://trello.aboutsource.net right now. The deployment
+process is managed by Github-Actions. See also
+https://developer.atlassian.com/cloud/trello/guides/power-ups/building-a-power-up-part-one/#getting-started
+for hosting requirements.
 
-WARNING: The hosting domain has to be manually whitelisted by the Toggl support team. Otherwise, there are no corresponding CORS headers when accessing the Toggl API. See also https://github.com/toggl/toggl_api_docs/blob/master/chapters/cors.md
+WARNING: The hosting domain has to be manually whitelisted by the Toggl support
+team. Otherwise, there are no corresponding CORS headers when accessing the
+Toggl API. See also
+https://github.com/toggl/toggl_api_docs/blob/master/chapters/cors.md
