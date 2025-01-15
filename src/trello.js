@@ -36,6 +36,7 @@ const track = async function (t) {
   await togglService.track(tracking, stripStoryPointsAndTaskToken(card.name));
 
   t.set("card", "shared", "tracking", tracking);
+  t.alert({ message: `started tracking task #${tracking.task}`});
 };
 
 export default {
