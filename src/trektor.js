@@ -14,14 +14,14 @@ TrelloPowerUp.initialize({
     return t
       .get("card", "shared", "tracking")
       .then((tracking) =>
-        tracking === null
+        tracking === undefined
           ? []
           : [{ icon: "./tractor-solid.svg", text: `#${tracking.task}` }],
       );
   },
   "card-detail-badges": function (t) {
     return t.get("card", "shared", "tracking").then((tracking) =>
-      tracking === null
+      tracking === undefined
         ? []
         : [
             {
