@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "prettier": "^3.5.0",
+    "prettier": "^3.5.1",
     "vite": "^6.1.0"
   }
 }
