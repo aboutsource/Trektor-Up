@@ -26,6 +26,26 @@ you can also click on the Trekking label within the top section of the Trello
 card to start tracking. If there is no Trekking label, you first have to create
 the tracking task as shown bevore.
 
+## GDPR
+
+* Trektor-Up needs to access a Toggl API key. The API key is used to interact
+  with the Toggl API. The API key is stored in the end users browser storage
+  only. All Toggl API access is initiated and handled by the end users browser.
+  The API key is not transfered to Trello itself or any other third party
+  service.
+* Trektor-Up generates Toggl tracking tasks on behalf of the Toggl user linked
+  to the Toggl API key mentioned above. The Toggl tracking tasks are based on
+  information attached to Trello cards. To create Toggl tracking tasks, these
+  data are transfered from Trello to Toggl:
+    * Trello card ids
+    * Trello card labels
+    * Trello card headlines.
+* The Trello users are responsible to keep Trello card headlines and Trello
+  card labels free of personal data. Otherwise, Trektor-Up is going to create
+  Toggl tracking tasks that may contain these personal data.
+* In addition to the data mentioned above, Trektor-Up does not access or
+  process any personal data.
+
 ## Hacking
 
 TrektorUp uses Vite/Rollup for development.
