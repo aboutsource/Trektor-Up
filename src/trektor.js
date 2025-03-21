@@ -1,16 +1,24 @@
 import trelloCallbacks from "./trello.js";
 
 TrelloPowerUp.initialize({
-  "card-buttons": function () {
+  "card-buttons": function() {
     return [
       {
         icon: "./tractor-solid.svg",
         text: "Trek now",
         callback: trelloCallbacks.track,
-      },
+      }, {
+        icon: "./rotate-solid.svg",
+        text: "Update trekking",
+        callback: trelloCallbacks.updateTracking,
+      }, {
+        icon: "./trash-can-solid.svg",
+        text: "Delete trekking",
+        callback: trelloCallbacks.deleteTracking,
+      }
     ];
   },
-  "card-badges": function (t) {
+  "card-badges": function(t) {
     return t
       .get("card", "shared", "tracking")
       .then((tracking) =>
@@ -19,20 +27,20 @@ TrelloPowerUp.initialize({
           : [{ icon: "./tractor-solid.svg", text: `#${tracking.task}` }],
       );
   },
-  "card-detail-badges": function (t) {
+  "card-detail-badges": function(t) {
     return t.get("card", "shared", "tracking").then((tracking) =>
       tracking === undefined
         ? []
         : [
-            {
-              title: "Trekking",
-              text: `#${tracking.task}`,
-              callback: trelloCallbacks.track,
-            },
-          ],
+          {
+            title: "Trekking",
+            text: `#${tracking.task}`,
+            callback: trelloCallbacks.track,
+          },
+        ],
     );
   },
-  "show-settings": function (t) {
+  "show-settings": function(t) {
     return t.popup({
       title: "Trektor Settings",
       url: "./settings.html",

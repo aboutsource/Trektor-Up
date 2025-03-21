@@ -91,14 +91,14 @@ export class TogglService {
     return togglTask;
   }
 
-  async track(tracking, description) {
+  async track(tracking) {
     const togglTask = await this.addTask(tracking);
 
     await this.#gateway.startTimeEntry(
       togglTask.workspace_id,
       togglTask.project_id,
       togglTask.id,
-      description,
+      tracking.description,
     );
   }
 
