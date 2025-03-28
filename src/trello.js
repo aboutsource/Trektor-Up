@@ -1,4 +1,5 @@
 import { TogglGateway, TogglService } from "./toggl.js";
+import { extractTrackingData } from "./extract.js";
 
 const withErrorMessage = async function (t, fnc) {
   try {
@@ -7,53 +8,6 @@ const withErrorMessage = async function (t, fnc) {
     t.alert({ message: error.message });
     throw error;
   }
-};
-
-const stripStoryPointsAndTaskToken = function (name) {
-  return name
-    .replace(/^(\s*\(\d+\))?\s*/, "") // story points, e.g. (3)
-    .replace(/\s*#\w+\s*$/, ""); // task token, e.g. #orga_5417
-};
-
-const extractProjectFromLabels = function (labels) {
-  const projectLabels = labels
-    .map((label) => label.name.match(/(?<=#)[a-z0-9]+$/)?.[0])
-    .filter((prefix) => prefix !== undefined);
-  if (projectLabels.length === 0) {
-    throw new Error("Card has no valid project labels.");
-  }
-  if (projectLabels.length > 1) {
-    throw new Error("Card has multiple project labels.");
-  }
-  return projectLabels[0];
-};
-
-const extractTaskFromLabels = function (labels) {
-  const tasks = labels
-    .map((label) => label.name.match(/(?<=!)\w+$/)?.[0])
-    .filter((prefix) => prefix !== undefined);
-  if (tasks.length === 0) {
-    return null;
-  }
-  if (tasks.length > 1) {
-    throw new Error("Card has multiple tasks labels.");
-  }
-  return tasks[0];
-};
-
-const extractTrackingData = async function (t) {
-  const card = await t.card("name", "labels", "idShort", "shortLink");
-
-  const project = extractProjectFromLabels(card.labels);
-  const task =
-    extractTaskFromLabels(card.labels) ??
-    `${project}_${card.idShort}_${card.shortLink}`;
-
-  return {
-    project,
-    task,
-    description: stripStoryPointsAndTaskToken(card.name),
-  };
 };
 
 const setTrackingData = async function (t, tracking) {
