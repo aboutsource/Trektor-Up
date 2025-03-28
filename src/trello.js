@@ -15,10 +15,8 @@ const stripStoryPointsAndTaskToken = function (name) {
     .replace(/\s*#\w+\s*$/, ""); // task token, e.g. #orga_5417
 };
 
-const extractTrackingData = async function (t) {
-  const card = await t.card("name", "labels", "idShort", "shortLink");
-
-  const projectLabels = card.labels
+const extractProjectFromLabels = function (labels) {
+  const projectLabels = labels
     .map((label) => label.name.match(/(?<=#)[a-z0-9]+$/)?.[0])
     .filter((prefix) => prefix !== undefined);
   if (projectLabels.length === 0) {
@@ -27,11 +25,33 @@ const extractTrackingData = async function (t) {
   if (projectLabels.length > 1) {
     throw new Error("Card has multiple project labels.");
   }
-  const project = projectLabels[0];
+  return projectLabels[0];
+};
+
+const extractTaskFromLabels = function (labels) {
+  const tasks = labels
+    .map((label) => label.name.match(/(?<=!)\w+$/)?.[0])
+    .filter((prefix) => prefix !== undefined);
+  if (tasks.length === 0) {
+    return null;
+  }
+  if (tasks.length > 1) {
+    throw new Error("Card has multiple tasks labels.");
+  }
+  return tasks[0];
+};
+
+const extractTrackingData = async function (t) {
+  const card = await t.card("name", "labels", "idShort", "shortLink");
+
+  const project = extractProjectFromLabels(card.labels);
+  const task =
+    extractTaskFromLabels(card.labels) ??
+    `${project}_${card.idShort}_${card.shortLink}`;
 
   return {
     project,
-    task: `${project}_${card.idShort}_${card.shortLink}`,
+    task,
     description: stripStoryPointsAndTaskToken(card.name),
   };
 };
