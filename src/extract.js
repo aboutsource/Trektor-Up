@@ -42,3 +42,8 @@ export const extractTrackingData = async function (t) {
     description: stripStoryPointsAndTaskToken(card.name),
   };
 };
+
+export const extractTokenName = async function (t) {
+  const board = await t.board("idOrganization");
+  return ["togglToken", board.idOrganization].join("_");
+};
