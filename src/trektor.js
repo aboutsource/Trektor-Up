@@ -27,6 +27,7 @@ TrelloPowerUp.initialize({
             {
               title: "Trekking",
               text: `#${tracking.task}`,
+              callback: trelloCallbacks.track,
             },
           ],
     );
