@@ -1,5 +1,5 @@
 import { TogglGateway, TogglService } from "./toggl.js";
-import { extractTrackingData } from "./extract.js";
+import { extractTokenName, extractTrackingData } from "./extract.js";
 
 const withErrorMessage = async function (t, fnc) {
   try {
@@ -15,7 +15,7 @@ const setTrackingData = async function (t, tracking) {
 };
 
 const track = async function (t) {
-  const token = await t.loadSecret("togglToken");
+  const token = await t.loadSecret(await extractTokenName(t));
   if (token === null) {
     throw new Error("Toggl API Token not configured");
   }
