@@ -19,10 +19,10 @@ const track = async function (t) {
   if (token === null) {
     throw new Error("Toggl API Token not configured");
   }
-  const togglService = new TogglService(new TogglGateway(token));
 
   const tracking = await extractTrackingData(t);
 
+  const togglService = new TogglService(new TogglGateway(token));
   await togglService.track(tracking);
   await setTrackingData(t, tracking);
   t.alert({ message: `Started trekking #${tracking.task}` });

@@ -11,41 +11,46 @@ export class TogglGateway {
     return this.#request("get", "/workspaces");
   }
 
-  getProjects(workspaceId) {
-    return this.#request("get", `/workspaces/${workspaceId}/projects`, {
+  getProjects(workspace) {
+    return this.#request("get", `/workspaces/${workspace.id}/projects`, {
       params: { active: true, per_page: 200 },
     });
   }
 
-  getTasks(workspaceId, projectId) {
+  getTasks(project) {
     return this.#request(
       "get",
-      `/workspaces/${workspaceId}/projects/${projectId}/tasks`,
+      `/workspaces/${project.workspace_id}/projects/${project.id}/tasks`,
     );
   }
 
-  createTask(workspaceId, projectId, name) {
+  createTask(project, name) {
     return this.#request(
       "post",
-      `/workspaces/${workspaceId}/projects/${projectId}/tasks`,
+      `/workspaces/${project.workspace_id}/projects/${project.id}/tasks`,
       {
         data: { name },
       },
     );
   }
 
-  startTimeEntry(workspaceId, projectId, taskId, description) {
-    return this.#request("post", `/workspaces/${workspaceId}/time_entries`, {
-      data: {
-        description,
-        start: new Date().toISOString(),
-        duration: -1,
-        workspace_id: workspaceId,
-        project_id: projectId,
-        task_id: taskId,
-        created_with: "trektor",
+  startTimeEntry(task, description) {
+    return this.#request(
+      "post",
+      `/workspaces/${task.workspace_id}/time_entries`,
+      {
+        data: {
+          description,
+          start: new Date().toISOString(),
+          duration: -1,
+          workspace_id: task.workspace_id,
+          project_id: task.project_id,
+          task_id: task.id,
+          billable: task.project_billable,
+          created_with: "trektor",
+        },
       },
-    });
+    );
   }
 
   async #request(method, path, conf = {}) {
@@ -79,30 +84,15 @@ export class TogglService {
     this.#gateway = gateway;
   }
 
-  async addTask(tracking) {
-    const workspaceId = await this.#getWorkspaceId();
-    const projectId = await this.#getProjectId(workspaceId, tracking.project);
-
-    const togglTasks = await this.#gateway.getTasks(workspaceId, projectId);
-    const togglTask =
-      togglTasks.find((t) => t.name === tracking.task) ||
-      (await this.#gateway.createTask(workspaceId, projectId, tracking.task));
-
-    return togglTask;
-  }
-
   async track(tracking) {
-    const togglTask = await this.addTask(tracking);
+    const workspace = await this.#getWorkspace();
+    const project = await this.#getProject(workspace, tracking.project);
+    const task = await this.#getOrCreateTask(project, tracking.task);
 
-    await this.#gateway.startTimeEntry(
-      togglTask.workspace_id,
-      togglTask.project_id,
-      togglTask.id,
-      tracking.description,
-    );
+    await this.#gateway.startTimeEntry(task, tracking.description);
   }
 
-  async #getWorkspaceId() {
+  async #getWorkspace() {
     const workspaces = await this.#gateway.getWorkspaces();
 
     if (workspaces.length === 0) {
@@ -114,11 +104,11 @@ export class TogglService {
       );
     }
 
-    return workspaces[0].id;
+    return workspaces[0];
   }
 
-  async #getProjectId(workspaceId, projectName) {
-    const allProjects = await this.#gateway.getProjects(workspaceId);
+  async #getProject(workspace, projectName) {
+    const allProjects = await this.#gateway.getProjects(workspace);
     const projects = allProjects.filter((project) =>
       project.name.endsWith(`(${projectName})`),
     );
@@ -132,6 +122,14 @@ export class TogglService {
       );
     }
 
-    return projects[0].id;
+    return projects[0];
+  }
+
+  async #getOrCreateTask(project, name) {
+    const tasks = await this.#gateway.getTasks(project);
+    return (
+      tasks.find((t) => t.name == name) ||
+      (await this.#gateway.createTask(project, name))
+    );
   }
 }
