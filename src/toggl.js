@@ -34,7 +34,7 @@ export class TogglGateway {
     );
   }
 
-  startTimeEntry(task, description) {
+  startTimeEntry(project, task, description) {
     return this.#request(
       "post",
       `/workspaces/${task.workspace_id}/time_entries`,
@@ -43,10 +43,10 @@ export class TogglGateway {
           description,
           start: new Date().toISOString(),
           duration: -1,
-          workspace_id: task.workspace_id,
-          project_id: task.project_id,
+          workspace_id: project.workspace_id,
+          project_id: project.id,
           task_id: task.id,
-          billable: task.project_billable,
+          billable: project.billable,
           created_with: "trektor",
         },
       },
@@ -89,7 +89,7 @@ export class TogglService {
     const project = await this.#getProject(workspace, tracking.project);
     const task = await this.#getOrCreateTask(project, tracking.task);
 
-    await this.#gateway.startTimeEntry(task, tracking.description);
+    await this.#gateway.startTimeEntry(project, task, tracking.description);
   }
 
   async #getWorkspace() {
