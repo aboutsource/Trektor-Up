@@ -12,9 +12,10 @@ jobs:
       - uses: "actions/checkout@v5"
       - uses: "actions/setup-node@v5"
         with:
+          node-version: "24"
           cache: "npm"
 
-      - run: "npm install"
+      - run: "npm clean-install"
       - run: "npm run build"
       - uses: "actions/upload-artifact@v4"
         with:
@@ -37,7 +38,7 @@ jobs:
           name: "dist"
           path: "dist"
       - name: "obfuscate password for rclone"
-        run: "echo \"RCLONE_FTP_PASS=$(echo ${{ secrets.HETZNER_FTP_PASS}} | rclone obscure -)\" >> $GITHUB_ENV"
+        run: 'echo "RCLONE_FTP_PASS=$(echo ${{ secrets.HETZNER_FTP_PASS}} | rclone obscure -)" >> $GITHUB_ENV'
       - name: "sync webspace"
         run: "rclone sync dist :ftp:"
         env:
@@ -45,4 +46,3 @@ jobs:
           RCLONE_FTP_USER: "${{ secrets.HETZNER_FTP_USER }}"
           RCLONE_FTP_EXPLICIT_TLS: "true"
           RCLONE_VERBOSE: 1
-
