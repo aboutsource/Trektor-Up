@@ -33,7 +33,7 @@ jobs:
         run: "sudo apt-get update"
       - name: "install rclone"
         run: "sudo apt-get -y install rclone"
-      - uses: "actions/download-artifact@v5"
+      - uses: "actions/download-artifact@v8"
         with:
           name: "dist"
           path: "dist"
